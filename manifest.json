@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "CookedTranslate",
+    "version": "0.2",
+    "description": "Better YouTube translation",
+    "permissions": ["webRequest", "storage", "tabs"],
+    "host_permissions": [
+        "*://*.youtube.com/*",
+        "https://generativelanguage.googleapis.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.youtube.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ]
+}
