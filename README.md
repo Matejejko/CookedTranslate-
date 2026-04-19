@@ -28,6 +28,18 @@ Job state is **in-memory only** (`backend/jobs.py`), so restart clears all jobs.
 
 ---
 
+## Architecture & request flow diagrams
+
+### Architecture
+
+![CookedTranslate architecture](./cookedtranslate_architecture.svg)
+
+### Request flow
+
+![CookedTranslate request flow](./cookedtranslate_request_flow.svg)
+
+---
+
 ## Repository structure
 
 ```text
