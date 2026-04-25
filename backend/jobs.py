@@ -76,7 +76,7 @@ class JobStore:
                 if (
                     job.video_id == video_id
                     and job.target_lang == target_lang
-                    and job.status not in (JobStatus.FAILED, JobStatus.CANCELLED)
+                    and job.status not in (JobStatus.FAILED, JobStatus.CANCELLED, JobStatus.DONE)
                 ):
                     return job
         return None

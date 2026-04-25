@@ -25,6 +25,7 @@ from gemini_client import GeminiError, transcribe_chunk
 from jobs import Job, JobStatus, JobStore
 from schemas import Segment
 from ytdl import YtdlError, download_audio
+import cache
 
 log = logging.getLogger("pipeline")
 
@@ -102,13 +103,17 @@ async def _run(job: Job, store: JobStore, tmp_root: Path) -> None:
                 progress = done_count_local / total
                 store.append_segments(job.job_id, segs, progress)
                 log.info("job %s: emitted chunk %d/%d (+%d segs)",
-                         job.job_id, done_count_local, total, len(segs))
+                    job.job_id, done_count_local, total, len(segs))
                 next_to_emit += 1
             done_count += 1
 
     tasks = [asyncio.create_task(process_one(i, p)) for i, p in enumerate(chunks)]
     await asyncio.gather(*tasks)
 
+    final_segments = store.get(job.job_id).segments
+    if final_segments:
+        await asyncio.to_thread(
+            cache.put, job.video_id, job.target_lang, final_segments
+        )
     store.update_status(job.job_id, JobStatus.DONE, progress=1.0)
-    log.info("job %s done: %d total segments", job.job_id,
-             len(store.get(job.job_id).segments))
+    log.info("job %s done: %d total segments", job.job_id, len(final_segments))

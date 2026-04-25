@@ -6,3 +6,6 @@ venv/
 .vscode/
 .idea/
 *.log
+cookedtranslate.db
+cookedtranslate.db-shm
+cookedtranslate.db-wal
