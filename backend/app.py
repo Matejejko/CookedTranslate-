@@ -7,8 +7,15 @@ Endpoints:
     DELETE /jobs/{job_id}           cancel an in-flight job
     GET    /health                  liveness probe
 """
-
+import sys
 import asyncio
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
+from dotenv import load_dotenv
+load_dotenv()
+
 import logging
 from contextlib import asynccontextmanager
 
@@ -37,7 +44,12 @@ async def lifespan(app: FastAPI):
         task.cancel()
 
 
-app = FastAPI(title="CookedTranslate Backend", lifespan=lifespan)
+from fastapi.responses import JSONResponse
+
+class UTF8JSONResponse(JSONResponse):
+    media_type = "application/json; charset=utf-8"
+
+app = FastAPI(title="CookedTranslate Backend", lifespan=lifespan, default_response_class=UTF8JSONResponse)
 
 # The extension runs on youtube.com and calls us cross-origin. During dev
 # allow everything; tighten in production.
